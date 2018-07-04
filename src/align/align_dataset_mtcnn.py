@@ -136,7 +136,7 @@ def main(args):
                             
     print('Total number of images: %d' % nrof_images_total)
     print('Number of successfully aligned images: %d' % nrof_successfully_aligned)
-    print('Percentage of success: %d %' % nrof_successfully_aligned/nrof_images_total)
+    print('Percentage of success: %d' % (nrof_successfully_aligned/nrof_images_total*100))
             
 
 def parse_arguments(argv):
