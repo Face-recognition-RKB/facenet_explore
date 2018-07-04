@@ -35,12 +35,15 @@ import facenet
 import align.detect_face
 import random
 from time import sleep
+from shutil import copyfile
 
 def main(args):
     sleep(random.random())
     output_dir = os.path.expanduser(args.output_dir)
+    failed_dir = os.path.expanduser(args.failed_dir)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+    os.makedirs(failed_dir)
     # Store some git revision info in a text file in the log directory
     src_path,_ = os.path.split(os.path.realpath(__file__))
     facenet.store_revision_info(src_path, output_dir, ' '.join(sys.argv))
@@ -77,6 +80,7 @@ def main(args):
                 nrof_images_total += 1
                 filename = os.path.splitext(os.path.split(image_path)[1])[0]
                 output_filename = os.path.join(output_class_dir, filename+'.png')
+                failed_filename = os.path.join(failed_dir, filename+'.png')
                 #print(image_path)
                 if not os.path.exists(output_filename):
                     try:
@@ -88,6 +92,7 @@ def main(args):
                         if img.ndim<2:
                             print('Unable to align "%s"' % image_path)
                             text_file.write('%s\n' % (output_filename))
+                            copyfile(image_path, failed_filename)
                             continue
                         if img.ndim == 2:
                             img = facenet.to_rgb(img)
@@ -133,6 +138,7 @@ def main(args):
                         else:
                             print('Unable to align "%s"' % image_path)
                             text_file.write('%s\n' % (output_filename))
+                            copyfile(image_path, failed_filename)
                             
     print('Total number of images: %d' % nrof_images_total)
     print('Number of successfully aligned images: %d' % nrof_successfully_aligned)
@@ -144,6 +150,7 @@ def parse_arguments(argv):
     
     parser.add_argument('input_dir', type=str, help='Directory with unaligned images.')
     parser.add_argument('output_dir', type=str, help='Directory with aligned face thumbnails.')
+    parser.add_argument('failed_dir', type=str, help='Directory with failed aligned')
     parser.add_argument('--image_size', type=int,
         help='Image size (height, width) in pixels.', default=182)
     parser.add_argument('--margin', type=int,
