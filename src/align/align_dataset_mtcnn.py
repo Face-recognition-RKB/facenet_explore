@@ -35,6 +35,7 @@ import facenet
 import align.detect_face
 import random
 from time import sleep
+from time import time
 from shutil import copyfile
 
 def main(args):
@@ -81,7 +82,8 @@ def main(args):
                 filename = os.path.splitext(os.path.split(image_path)[1])[0]
                 output_filename = os.path.join(output_class_dir, filename+'.png')
                 failed_filename = os.path.join(failed_dir, filename+'.png')
-                #print(image_path)
+                start = time()
+                print(image_path)
                 if not os.path.exists(output_filename):
                     try:
                         img = misc.imread(image_path)
@@ -135,6 +137,8 @@ def main(args):
                                     output_filename_n = "{}{}".format(filename_base, file_extension)
                                 misc.imsave(output_filename_n, scaled)
                                 text_file.write('%s %d %d %d %d\n' % (output_filename_n, bb[0], bb[1], bb[2], bb[3]))
+                                end = time()    
+                                print('Process: %d ms' % (end-start))
                         else:
                             print('Unable to align "%s"' % image_path)
                             text_file.write('%s\n' % (output_filename))
